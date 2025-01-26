@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job AutoFiller</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <h1>Job AutoFiller</h1>
+  <div id="auth-section">
+    <button id="login-btn">Login</button>
+    <button id="logout-btn" style="display: none;">Logout</button>
+  </div>
+  <div id="main-section" style="display: none;">
+    <h2>Resume Upload</h2>
+    <input type="file" id="resume-input" accept=".pdf" />
+    <button id="upload-btn">Upload</button>
+    <h2>Job Description</h2>
+    <textarea id="job-questions" placeholder="Enter job questions"></textarea>
+    <button id="get-suggestions-btn">Get Suggestions</button>
+    <div id="suggestions"></div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
