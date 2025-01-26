@@ -1,26 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Job AutoFiller</title>
-  <link rel="stylesheet" href="popup.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Portal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 400px;
+    }
+    h1 {
+      text-align: center;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    #main-section {
+      display: none;
+    }
+    #suggestions {
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Job AutoFiller</h1>
+  <h1>Job Portal</h1>
+
   <div id="auth-section">
-    <button id="login-btn">Login</button>
-    <button id="logout-btn" style="display: none;">Logout</button>
+    <button id="signup-btn" style="background-color: #4CAF50; color: white;">Sign Up</button>
+    <button id="login-btn" style="background-color: #008CBA; color: white;">Log In</button>
   </div>
-  <div id="main-section" style="display: none;">
-    <h2>Resume Upload</h2>
-    <input type="file" id="resume-input" accept=".pdf" />
-    <button id="upload-btn">Upload</button>
-    <h2>Job Description</h2>
-    <textarea id="job-questions" placeholder="Enter job questions"></textarea>
-    <button id="get-suggestions-btn">Get Suggestions</button>
-    <div id="suggestions"></div>
+
+  <div id="main-section">
+    <button id="logout-btn" style="background-color: #f44336; color: white;">Log Out</button>
+    <div>
+      <h3>Upload Resume</h3>
+      <input type="file" id="resume-input" />
+      <button id="upload-btn" style="background-color: #4CAF50; color: white;">Upload Resume</button>
+    </div>
+    <div>
+      <h3>Get Job Suggestions</h3>
+      <textarea id="job-questions" rows="4" placeholder="Enter your questions here..."></textarea>
+      <button id="get-suggestions-btn" style="background-color: #008CBA; color: white;">Get Suggestions</button>
+    </div>
+    <div id="suggestions">
+      <h3>Suggestions:</h3>
+      <!-- Suggestions will be dynamically populated here -->
+    </div>
   </div>
+
   <script src="popup.js"></script>
 </body>
 </html>

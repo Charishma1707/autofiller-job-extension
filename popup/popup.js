@@ -1,34 +1,31 @@
+document.getElementById("signup-btn").addEventListener("click", () => {
+  const email = prompt("Enter your email:");
+  const password = prompt("Enter your password:");
+  chrome.runtime.sendMessage({ action: "signup", email, password });
+});
+
 document.getElementById("login-btn").addEventListener("click", () => {
-  chrome.runtime.sendMessage({ action: "login" });
+  const email = prompt("Enter your email:");
+  const password = prompt("Enter your password:");
+  chrome.runtime.sendMessage({ action: "login", email, password });
 });
 
 document.getElementById("logout-btn").addEventListener("click", () => {
   chrome.runtime.sendMessage({ action: "logout" });
-  location.reload();
 });
 
 document.getElementById("upload-btn").addEventListener("click", () => {
   const fileInput = document.getElementById("resume-input");
-  if (fileInput.files.length === 0) {
-    alert("Please select a file.");
-    return;
-  }
-
   const file = fileInput.files[0];
   chrome.runtime.sendMessage({ action: "uploadResume", file });
 });
 
 document.getElementById("get-suggestions-btn").addEventListener("click", () => {
-  const jobQuestions = document.getElementById("job-questions").value;
-  if (!jobQuestions.trim()) {
-    alert("Please enter job questions.");
-    return;
-  }
-
-  chrome.runtime.sendMessage({ action: "getJobSuggestions", jobQuestions }, (response) => {
+  const questions = document.getElementById("job-questions").value;
+  chrome.runtime.sendMessage({ action: "getJobSuggestions", questions }, (response) => {
     const suggestionsDiv = document.getElementById("suggestions");
     suggestionsDiv.innerHTML = response.suggestions
-      .map((suggestion) => `<p>${suggestion}</p>`)
+      .map((s) => `<p>${s}</p>`)
       .join("");
   });
 });

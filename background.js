@@ -1,58 +1,104 @@
+const apiBaseUrl = `${process.env.API_BASE_URL}`;
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  const apiBaseUrl = "https://example-backend.com"; // Replace with your backend URL
-  const token = localStorage.getItem("authToken");
+  if (message.action === "signup") {
+    const { email, password } = message;
+    try {
+      const response = await fetch(`${apiBaseUrl}/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-  if (message.action === "login") {
-    const user = prompt("Enter your email:");
-    const password = prompt("Enter your password:");
-
+      const data = await response.json();
+      if (response.ok) {
+        alert(data.message);
+      } else {
+        alert(data.error);
+      }
+    } catch (err) {
+      console.error("Signup error:", err);
+    }
+  } else if (message.action === "login") {
+    const { email, password } = message;
     try {
       const response = await fetch(`${apiBaseUrl}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: user, password }),
+        body: JSON.stringify({ email, password }),
       });
+
       const data = await response.json();
-      localStorage.setItem("authToken", data.token);
-      alert("Logged in successfully!");
+      if (response.ok) {
+        chrome.storage.local.set({ authToken: data.token }, () => {
+          alert(data.message);
+        });
+      } else {
+        alert(data.error);
+      }
     } catch (err) {
-      console.error(err);
-      alert("Login failed.");
+      console.error("Login error:", err);
     }
   } else if (message.action === "logout") {
-    localStorage.removeItem("authToken");
-    alert("Logged out successfully.");
+    chrome.storage.local.remove("authToken", () => {
+      alert("Logged out successfully.");
+    });
   } else if (message.action === "uploadResume") {
-    const formData = new FormData();
-    formData.append("resume", message.file);
+    chrome.storage.local.get("authToken", async (result) => {
+      const token = result.authToken;
+      if (!token) {
+        alert("User not logged in.");
+        return;
+      }
 
-    try {
-      await fetch(`${apiBaseUrl}/upload-resume`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-      alert("Resume uploaded successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to upload resume.");
-    }
+      try {
+        const formData = new FormData();
+        formData.append("resume", message.file);
+
+        const response = await fetch(`${apiBaseUrl}/upload-resume`, {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert(data.message);
+        } else {
+          alert(data.error);
+        }
+      } catch (err) {
+        console.error("Resume upload error:", err);
+      }
+    });
   } else if (message.action === "getJobSuggestions") {
-    try {
-      const response = await fetch(`${apiBaseUrl}/job-suggestions`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ questions: message.jobQuestions }),
-      });
-      const data = await response.json();
-      sendResponse({ suggestions: data.suggestions });
-    } catch (err) {
-      console.error(err);
-      sendResponse({ suggestions: [] });
-    }
+    chrome.storage.local.get("authToken", async (result) => {
+      const token = result.authToken;
+
+      if (!token) {
+        alert("User not logged in.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${apiBaseUrl}/job-suggestions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ questions: message.questions }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          sendResponse({ suggestions: data.suggestions });
+        } else {
+          alert(data.error);
+        }
+      } catch (err) {
+        console.error("Job suggestions error:", err);
+      }
+    });
+
     return true;
   }
 });
